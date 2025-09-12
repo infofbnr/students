@@ -188,47 +188,61 @@ if (postForm) {
     }
   });
 
-  postForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const user = auth.currentUser;
-    const errorEl = q("#post-error");
-    errorEl.innerText = "";
+postForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  const errorEl = q("#post-error");
+  errorEl.innerText = "";
 
-    if (!user || !user.emailVerified) { 
-      errorEl.innerText = "Login and verify your email to post.";
-      return;
+  if (!user || !user.emailVerified) { 
+    errorEl.innerText = "Login and verify your email to post.";
+    return;
+  }
+
+  const title = q("#title").value.trim();
+  const description = q("#description").value.trim();
+  const subject = q("#subject").value;
+  const grade = q("#grade").value;
+  const mediaFile = q("#media-file")?.files[0]; // image or video
+
+  if (!title || !description || !subject || !grade) {
+    errorEl.innerText = "All fields are required";
+    return;
+  }
+
+  try {
+    let mediaUrl = "";
+    if (mediaFile) {
+      // Upload file directly like old project
+      const storageRef = ref(storage, `posts/${user.uid}_${Date.now()}_${mediaFile.name}`);
+      const snapshot = await uploadBytes(storageRef, mediaFile);
+      mediaUrl = await getDownloadURL(snapshot.ref);
     }
 
-    const title = q("#title").value.trim();
-    const description = q("#description").value.trim();
-    const subject = q("#subject").value;
-    const grade = q("#grade").value;
-    const mediaFile = q("#media-file")?.files[0]; // image or video
+    await addDoc(collection(db, "posts"), {
+      title,
+      description,
+      subject,
+      grade,
+      authorId: user.uid,
+      username: user.displayName,
+      createdAt: serverTimestamp(),
+      media: mediaUrl || null
+    });
 
-    if (!title || !description || !subject || !grade) {
-      errorEl.innerText = "All fields are required";
-      return;
-    }
+    // Reset form
+    q("#title").value = "";
+    q("#description").value = "";
+    q("#subject").value = "";
+    q("#grade").value = "";
+    q("#media-file").value = "";
 
-    try {
-      const mediaUrl = await uploadFile(mediaFile, "posts/media", user.uid);
-
-      await addDoc(collection(db, "posts"), {
-        title,
-        description,
-        subject,
-        grade,
-        authorId: user.uid,
-        username: user.displayName,
-        createdAt: serverTimestamp(),
-        media: mediaUrl || null
-      });
-
-      window.location.href = "index.html";
-    } catch (err) {
-      errorEl.innerText = err.message;
-    }
-  });
+    alert("Post submitted successfully!");
+    window.location.href = "index.html";
+  } catch (err) {
+    errorEl.innerText = err.message;
+  }
+});
 
 
 }
