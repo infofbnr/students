@@ -192,7 +192,7 @@ if (postForm) {
     const description = q("#description").value.trim();
     const subject = q("#subject").value;
     const grade = q("#grade").value;
-    const imageFile = q("#image-file")?.files[0];
+    const imageFile = q("#media-file")?.files[0];
 
     if (!title || !description || !subject || !grade) {
       errorEl.innerText = "All fields are required";
