@@ -50,7 +50,7 @@
       <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded w-full">Logout</button>
     </div>
     <div>
-      <button onclick="window.location.href='index.html'" 
+      <button onclick="window.location.href='../'" 
               class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
         ← Back to Home
       </button>
@@ -59,7 +59,7 @@
 
 </div>
 
-<script type="module" src="main.js"></script>
+<script type="module" src="../main.js"></script>
 <script type="module">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAuth, onAuthStateChanged, sendEmailVerification, updateProfile, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
@@ -89,7 +89,7 @@ const hide = (el) => el && el.classList.add("hidden");
 // Auth check
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "../login/";
     return;
   }
 
