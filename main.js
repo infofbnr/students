@@ -160,11 +160,22 @@ const overlay = q("#overlay");
 
 // Helper for file uploads
 async function uploadFile(file, folder, userId) {
-  if (!file) return null;
-  const fileRef = ref(storage, `${folder}/${userId}_${Date.now()}_${file.name}`);
-  await uploadBytes(fileRef, file);
-  return await getDownloadURL(fileRef);
+  if (!file) return null; // if no file, just return null
+
+  // unique file name: userId + timestamp + original name
+  const fileName = `${userId}_${Date.now()}_${file.name}`;
+  const fileRef = ref(storage, `${folder}/${fileName}`);
+
+  try {
+    await uploadBytes(fileRef, file);       // upload the file
+    const url = await getDownloadURL(fileRef); // get downloadable URL
+    return url;
+  } catch (err) {
+    console.error("Upload failed:", err);
+    return null;
+  }
 }
+
 
 if (postForm) {
   onAuthStateChanged(auth, (user) => {
@@ -200,17 +211,8 @@ if (postForm) {
     }
 
     try {
-      let mediaURL = null;
+      const mediaUrl = await uploadFile(mediaFile, "posts/media", user.uid);
 
-      if (mediaFile) {
-        // Upload media to Firebase Storage
-        const ext = mediaFile.name.split('.').pop();
-        const storageRef = ref(storage, `posts/media/${user.uid}_${Date.now()}.${ext}`);
-        await uploadBytes(storageRef, mediaFile);
-        mediaURL = await getDownloadURL(storageRef);
-      }
-
-      // Save post to Firestore
       await addDoc(collection(db, "posts"), {
         title,
         description,
@@ -219,14 +221,15 @@ if (postForm) {
         authorId: user.uid,
         username: user.displayName,
         createdAt: serverTimestamp(),
-        media: mediaURL // can be null
+        media: mediaUrl || null
       });
 
       window.location.href = "index.html";
     } catch (err) {
-      errorEl.innerText = "Error: " + err.message;
+      errorEl.innerText = err.message;
     }
   });
+
 
 }
 
