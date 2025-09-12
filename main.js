@@ -192,7 +192,7 @@ if (postForm) {
     const description = q("#description").value.trim();
     const subject = q("#subject").value;
     const grade = q("#grade").value;
-    const imageFile = q("#media-file")?.files[0];
+    const mediaFile = q("#media-file")?.files[0]; // image or video
 
     if (!title || !description || !subject || !grade) {
       errorEl.innerText = "All fields are required";
@@ -200,8 +200,17 @@ if (postForm) {
     }
 
     try {
-      const imageUrl = await uploadFile(imageFile, "posts/images", user.uid);
+      let mediaURL = null;
 
+      if (mediaFile) {
+        // Upload media to Firebase Storage
+        const ext = mediaFile.name.split('.').pop();
+        const storageRef = ref(storage, `posts/media/${user.uid}_${Date.now()}.${ext}`);
+        await uploadBytes(storageRef, mediaFile);
+        mediaURL = await getDownloadURL(storageRef);
+      }
+
+      // Save post to Firestore
       await addDoc(collection(db, "posts"), {
         title,
         description,
@@ -210,13 +219,15 @@ if (postForm) {
         authorId: user.uid,
         username: user.displayName,
         createdAt: serverTimestamp(),
-        image: imageUrl || null
+        media: mediaURL // can be null
       });
+
       window.location.href = "index.html";
     } catch (err) {
-      errorEl.innerText = err.message;
+      errorEl.innerText = "Error: " + err.message;
     }
   });
+
 }
 
 // =======================
