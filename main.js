@@ -22,8 +22,10 @@ import {
   query,
   where,
   serverTimestamp,
-  updateDoc
+  updateDoc,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+
 import {
   getStorage,
   ref,
@@ -225,9 +227,14 @@ async function loadPosts(filterGrade = "all") {
   if (!container) return;
 
   let postsQuery = collection(db, "posts");
+
+  // Filter by grade if needed
   if (filterGrade !== "all") {
     postsQuery = query(postsQuery, where("grade", "==", filterGrade));
   }
+
+  // Sort by date descending (newest first)
+  postsQuery = query(postsQuery, orderBy("createdAt", "desc"));
 
   const snapshot = await getDocs(postsQuery);
   container.innerHTML = "";
@@ -239,12 +246,10 @@ async function loadPosts(filterGrade = "all") {
 
   snapshot.forEach(docSnap => {
     const post = docSnap.data();
-    const imageHtml = post.image ? `<img src="${post.image}" class="my-2 rounded shadow max-h-64 w-full object-cover">` : "";
     container.innerHTML += `
       <div class="bg-white p-4 rounded shadow">
         <h3 class="text-lg font-bold">${post.title}</h3>
         <p>${post.description}</p>
-        ${imageHtml}
         <p class="text-sm text-gray-500">Subject: ${post.subject} | Grade: ${post.grade}</p>
         <p class="text-sm text-gray-500">Posted by: ${post.username}</p>
         <a href="view.html?id=${docSnap.id}" class="text-blue-600 underline text-sm">View & Answer</a>
@@ -252,7 +257,6 @@ async function loadPosts(filterGrade = "all") {
     `;
   });
 }
-
 const gradeFilter = q("#grade-filter");
 if (gradeFilter) {
   gradeFilter.addEventListener("change", () => loadPosts(gradeFilter.value));
