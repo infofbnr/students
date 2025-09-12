@@ -7,8 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
+
+  <!-- Post Container -->
   <div id="post-container" class="max-w-3xl mx-auto bg-white p-6 rounded shadow mb-6"></div>
 
+  <!-- Answers -->
   <div class="max-w-3xl mx-auto">
     <h3 class="text-lg font-bold mb-2">Answers</h3>
     <div id="answers-container" class="space-y-3 mb-4"></div>
@@ -16,6 +19,14 @@
       <textarea id="answer-text" class="border p-2 w-full rounded" placeholder="Write an answer..." required></textarea>
       <button class="bg-blue-600 text-white p-2 rounded w-full">Submit Answer</button>
     </form>
+  </div>
+
+  <!-- Back button -->
+  <div class="max-w-3xl mx-auto mt-4">
+    <button onclick="window.location.href='index.html'" 
+            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+      ← Back to Home
+    </button>
   </div>
 
   <script type="module" src="main.js"></script>
