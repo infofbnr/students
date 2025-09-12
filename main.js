@@ -289,6 +289,7 @@ async function loadSinglePost() {
   const id = params.get("id");
   if (!id) return;
 
+  // Load post
   const docRef = doc(db, "posts", id);
   const docSnap = await getDoc(docRef);
   if (!docSnap.exists()) {
@@ -297,17 +298,32 @@ async function loadSinglePost() {
   }
 
   const post = docSnap.data();
-  const imageHtml = post.image ? `<img src="${post.image}" class="my-2 rounded shadow max-h-64 w-full object-cover">` : "";
+
+  // Media element
+  let mediaHtml = "";
+  if (post.image) {
+    const lower = post.image.toLowerCase();
+    if (lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".ogg")) {
+      mediaHtml = `<video src="${post.image}" controls class="my-2 rounded shadow w-full max-h-64 object-cover"></video>`;
+    } else {
+      mediaHtml = `<img src="${post.image}" class="my-2 rounded shadow max-h-64 w-full object-cover">`;
+    }
+  }
 
   postContainer.innerHTML = `
     <h2 class="text-xl font-bold mb-2">${post.title}</h2>
     <p>${post.description}</p>
-    ${imageHtml}
+    ${mediaHtml}
     <p class="text-sm text-gray-500">Subject: ${post.subject} | Grade: ${post.grade}</p>
     <p class="text-sm text-gray-500">Posted by: ${post.username}</p>
   `;
 
-  const answersSnap = await getDocs(collection(db, "posts", id, "answers"));
+  // Load answers sorted by creation date (oldest first)
+  const answersSnap = await getDocs(query(
+    collection(db, "posts", id, "answers"),
+    orderBy("createdAt", "asc")
+  ));
+
   answersContainer.innerHTML = "";
   answersSnap.forEach(ansDoc => {
     const ans = ansDoc.data();
@@ -319,9 +335,10 @@ async function loadSinglePost() {
     `;
   });
 
+  // Answer form
   const answerForm = q("#answer-form");
   if (answerForm) {
-    answerForm.addEventListener("submit", async (e) => {
+    answerForm.onsubmit = async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
       const errorEl = q("#answer-error");
@@ -343,8 +360,8 @@ async function loadSinglePost() {
       });
 
       q("#answer-text").value = "";
-      loadSinglePost();
-    });
+      loadSinglePost(); // Refresh post & answers
+    };
   }
 }
 
