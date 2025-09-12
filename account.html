@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+  <h2 class="text-2xl font-bold mb-6 text-center">My Account</h2>
+
+  <!-- User Info Panel -->
+  <div class="bg-gray-50 p-4 rounded mb-6">
+    <p class="text-sm text-gray-500">Current Username:</p>
+    <p id="current-username" class="text-lg font-semibold mb-2">Loading...</p>
+
+    <p class="text-sm text-gray-500">Email:</p>
+    <p id="current-email" class="text-lg font-semibold mb-2">Loading...</p>
+
+    <p id="email-verification-msg" class="text-sm text-red-600"></p>
+  </div>
+
+  <!-- Actions Panel -->
+  <div class="space-y-4">
+
+    <!-- Change Username -->
+    <div>
+      <input type="text" id="account-username" placeholder="New username" class="border p-2 w-full rounded">
+      <button id="change-username-btn" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded w-full">Change Username</button>
+      <p id="username-msg" class="text-sm mt-1"></p>
+    </div>
+
+    <!-- Reset Password -->
+    <div>
+      <input type="email" id="reset-email" placeholder="Your email" class="border p-2 w-full rounded">
+      <button id="reset-password-btn" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded w-full">Send Reset Link</button>
+      <p id="reset-msg" class="text-sm mt-1"></p>
+    </div>
+
+    <!-- Resend Verification Email -->
+    <div id="verify-section">
+      <button id="resend-verification-btn" class="bg-green-500 text-white px-4 py-2 rounded w-full">Resend Verification Email</button>
+    </div>
+
+    <!-- Logout -->
+    <div>
+      <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded w-full">Logout</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module" src="main.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+import { getAuth, onAuthStateChanged, sendEmailVerification, updateProfile, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCHYnW3qaNo7oGKMPs9DFALdWXIeYv6ixY",
+  authDomain: "gossip-38bf8.firebaseapp.com",
+  projectId: "gossip-38bf8",
+  storageBucket: "gossip-38bf8.firebasestorage.app",
+  messagingSenderId: "224975261462",
+  appId: "1:224975261462:web:f08fd243ec4a5c1a4a4a37",
+  measurementId: "G-N7S9894R3N"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Helper
+const q = (sel) => document.querySelector(sel);
+const show = (el) => el && el.classList.remove("hidden");
+const hide = (el) => el && el.classList.add("hidden");
+
+// Auth check
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Display current info
+  q("#current-username").innerText = user.displayName || "Not set";
+  q("#current-email").innerText = user.email;
+
+  q("#account-username").value = user.displayName || "";
+  q("#reset-email").value = user.email;
+
+  // Email verification
+  if (!user.emailVerified) {
+    q("#email-verification-msg").innerText = "Email not verified!";
+    show(q("#verify-section"));
+  } else {
+    q("#email-verification-msg").innerText = "Email verified ✅";
+    hide(q("#verify-section"));
+  }
+});
+
+// Change username
+q("#change-username-btn")?.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  const newUsername = q("#account-username").value.trim();
+  const msgEl = q("#username-msg");
+  msgEl.innerText = "";
+
+  if (!newUsername) {
+    msgEl.innerText = "Username cannot be empty.";
+    return;
+  }
+
+  try {
+    await updateProfile(user, { displayName: newUsername });
+    q("#current-username").innerText = newUsername;
+    msgEl.innerText = "Username updated!";
+  } catch (err) {
+    msgEl.innerText = "Error: " + err.message;
+  }
+});
+
+// Resend verification email
+q("#resend-verification-btn")?.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  try {
+    await sendEmailVerification(user);
+    q("#email-verification-msg").innerText = "Verification email sent!";
+  } catch (err) {
+    q("#email-verification-msg").innerText = "Error: " + err.message;
+  }
+});
+
+// Password reset
+q("#reset-password-btn")?.addEventListener("click", async () => {
+  const email = q("#reset-email").value.trim();
+  const msgEl = q("#reset-msg");
+  msgEl.innerText = "";
+  try {
+    await sendPasswordResetEmail(auth, email);
+    msgEl.innerText = "Password reset email sent!";
+  } catch (err) {
+    msgEl.innerText = "Error: " + err.message;
+  }
+});
+
+// Logout
+q("#logout-btn")?.addEventListener("click", () => signOut(auth));
+</script>
+</body>
+</html>

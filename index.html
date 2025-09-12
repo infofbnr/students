@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework Hub</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<nav class="bg-blue-600 text-white p-4 flex justify-between items-center">
+  <h1 class="text-xl font-bold">📚 Homework Hub</h1>
+  <div>
+    <button id="login-btn" class="bg-white text-blue-600 px-3 py-1 rounded">Login</button>
+    <button id="logout-btn" class="bg-red-500 px-3 py-1 rounded hidden">Logout</button>
+    <a href="post.html" class="ml-4 bg-green-500 px-3 py-1 rounded">+ Post</a>
+    <a href="account.html" class="ml-2 bg-gray-200 text-black px-3 py-1 rounded hidden" id="account-btn">Account</a>
+  </div>
+</nav>
+
+<main class="p-6 max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Browse Posts</h2>
+
+  <select id="grade-filter" class="border p-2 rounded mb-4 w-full">
+    <option value="all">All Grades</option>
+    <option value="7">Grade 7</option>
+    <option value="8">Grade 8</option>
+    <option value="9">Grade 9</option>
+    <option value="10">Grade 10</option>
+    <option value="11">Grade 11</option>
+    <option value="12">Grade 12</option>
+  </select>
+
+  <div id="posts-container" class="space-y-4"></div>
+</main>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

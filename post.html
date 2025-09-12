@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Post</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<!-- Overlay for unverified users -->
+<div id="overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-6 rounded shadow text-center">
+    <h2 class="text-xl font-bold mb-2 text-red-600">Login Required</h2>
+    <p class="mb-4">You must be logged in and verified to create a post.</p>
+    <a href="login.html" class="bg-blue-600 text-white px-4 py-2 rounded">Login</a>
+  </div>
+</div>
+
+<!-- Post Form -->
+<div id="post-container" class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-bold mb-4">Create a Post</h2>
+  <form id="post-form" class="space-y-3">
+    <input id="title" type="text" placeholder="Title" class="border p-2 w-full rounded" required>
+    <textarea id="description" placeholder="Describe your problem or lesson" class="border p-2 w-full rounded" required></textarea>
+    <select id="subject" class="border p-2 w-full rounded" required>
+      <option value="">Select Subject</option>
+      <option value="Math">Math</option>
+      <option value="Science">Science</option>
+      <option value="History">History</option>
+      <option value="Language">Language</option>
+    </select>
+    <select id="grade" class="border p-2 w-full rounded" required>
+      <option value="">Select Grade</option>
+      <option value="7">Grade 7</option>
+      <option value="8">Grade 8</option>
+      <option value="9">Grade 9</option>
+      <option value="10">Grade 10</option>
+      <option value="11">Grade 11</option>
+      <option value="12">Grade 12</option>
+    </select>
+
+    <!-- Media uploads -->
+    <input type="file" id="image-file" accept="image/*" class="border p-2 w-full rounded">
+    <input type="file" id="video-file" accept="video/*" class="border p-2 w-full rounded">
+    <input type="file" id="audio-file" accept="audio/*" class="border p-2 w-full rounded">
+
+    <button type="submit" class="bg-green-500 text-white p-2 rounded w-full">Post</button>
+    <p id="post-error" class="text-red-600 text-sm mt-2"></p>
+  </form>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
