@@ -214,7 +214,7 @@ postForm.addEventListener("submit", async (e) => {
     let mediaUrl = "";
     if (mediaFile) {
       // Upload file directly like old project
-      const storageRef = ref(storage, `posts/${user.uid}_${Date.now()}_${mediaFile.name}`);
+      const storageRef = ref(storage, `uploads/${user.uid}_${Date.now()}_${mediaFile.name}`);
       const snapshot = await uploadBytes(storageRef, mediaFile);
       mediaUrl = await getDownloadURL(snapshot.ref);
     }
