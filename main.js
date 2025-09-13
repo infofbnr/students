@@ -158,24 +158,6 @@ if (resetBtn) {
 const postForm = q("#post-form");
 const overlay = q("#overlay");
 
-// Helper for file uploads
-async function uploadFile(file, folder, userId) {
-  if (!file) return null; // if no file, just return null
-
-  // unique file name: userId + timestamp + original name
-  const fileName = `${userId}_${Date.now()}_${file.name}`;
-  const fileRef = ref(storage, `${folder}/${fileName}`);
-
-  try {
-    await uploadBytes(fileRef, file);       // upload the file
-    const url = await getDownloadURL(fileRef); // get downloadable URL
-    return url;
-  } catch (err) {
-    console.error("Upload failed:", err);
-    return null;
-  }
-}
-
 
 if (postForm) {
   onAuthStateChanged(auth, (user) => {
