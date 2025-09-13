@@ -255,17 +255,27 @@ async function loadPosts(filterGrade = "all") {
   }
 
   snapshot.forEach(docSnap => {
+    container.innerHTML = `<p class="text-gray-500">Loading posts...</p>`;
+
     const post = docSnap.data();
+    const mediaHtml = post.media
+      ? `<img src="${post.media}" alt="${post.title}" class="w-20 h-20 object-cover rounded-md flex-shrink-0">`
+      : `<div class="w-20 h-20 bg-gray-200 rounded-md flex-shrink-0 flex items-center justify-center text-gray-500 text-xs">No Image</div>`;
+
     container.innerHTML += `
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold">${post.title}</h3>
-        <p>${post.description}</p>
-        <p class="text-sm text-gray-500">Subject: ${post.subject} | Grade: ${post.grade}</p>
-        <p class="text-sm text-gray-500">Posted by: ${post.username}</p>
-        <a href="view.html?id=${docSnap.id}" class="text-blue-600 underline text-sm">View & Answer</a>
+      <div class="bg-white p-4 rounded shadow flex items-start gap-4 hover:shadow-md transition">
+        ${mediaHtml}
+        <div class="flex flex-col">
+          <h3 class="text-lg font-bold">${post.title}</h3>
+          <p class="text-gray-700 text-sm mb-1">${post.description}</p>
+          <p class="text-xs text-gray-500">Subject: ${post.subject} | Grade: ${post.grade}</p>
+          <p class="text-xs text-gray-500">Posted by: ${post.username}</p>
+          <a href="view.html?id=${docSnap.id}" class="text-blue-600 underline text-xs mt-1">View & Answer</a>
+        </div>
       </div>
     `;
   });
+
 }
 const gradeFilter = q("#grade-filter");
 if (gradeFilter) {
@@ -297,14 +307,15 @@ async function loadSinglePost() {
 
   // Media element
   let mediaHtml = "";
-  if (post.image) {
-    const lower = post.image.toLowerCase();
+  if (post.media) {
+    const lower = post.media.toLowerCase();
     if (lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".ogg")) {
-      mediaHtml = `<video src="${post.image}" controls class="my-2 rounded shadow w-full max-h-64 object-cover"></video>`;
+      mediaHtml = `<video src="${post.media}" controls class="my-2 rounded shadow w-full max-h-64 object-cover"></video>`;
     } else {
-      mediaHtml = `<img src="${post.image}" class="my-2 rounded shadow max-h-64 w-full object-cover">`;
+      mediaHtml = `<img src="${post.media}" class="my-2 rounded shadow max-h-64 w-full object-cover">`;
     }
   }
+
 
   postContainer.innerHTML = `
     <h2 class="text-xl font-bold mb-2">${post.title}</h2>
