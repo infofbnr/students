@@ -96,7 +96,7 @@ if (loginForm) {
         errorEl.innerText = "Email not verified. Please verify your email first.";
         return;
       }
-      window.location.href = "post.html";
+      window.location.href = "../post/";
     } catch (err) {
       errorEl.innerText = err.message;
     }
