@@ -64,7 +64,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       "Sciences",
       "Mathématiques",
       "Histoire-Géo",
-      "Philosophie"
+      "Philosophie",
+      "Français",
+      "Anglais",
+      "Arabe",
+      "EMC",
+      "SVT",
+      "Physique",
+      "Chimie",
+      "SES",
+      "Spécialité",
+      "Sport"
     ]
   };
 
