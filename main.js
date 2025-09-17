@@ -73,8 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       "Physique",
       "Chimie",
       "SES",
-      "Spécialité",
-      "Sport"
+      "Spécialité"
     ]
   };
 
