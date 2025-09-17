@@ -1,26 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="../crossclass.png">
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<div class="bg-white shadow-lg p-6 rounded w-96">
-  <h2 class="text-xl font-bold mb-4 text-center">Login</h2>
-  <form id="login-form" class="space-y-3">
-    <input id="email" type="email" placeholder="Email" class="border p-2 w-full rounded" required>
-    <input id="password" type="password" placeholder="Password" class="border p-2 w-full rounded" required>
-    <button class="bg-blue-600 text-white p-2 w-full rounded">Login</button>
-    <p id="login-error" class="text-red-600 text-sm mt-2"></p>
-  </form>
-  <p class="mt-4 text-center text-sm">
-    Don't have an account? <a href="../signup/" class="text-blue-600 underline">Sign up</a>
-  </p>
-</div>
+  <!-- Top Bar with Go Back -->
+  <header class="bg-blue-600 text-white flex items-center p-4 shadow-md">
 
-<script type="module" src="../main.js"></script>
+
+    <!-- Logo + Title -->
+    <img src="../crossclass.png" alt="Logo" class="w-10 h-10 rounded-full mr-3">
+    <h1 class="text-xl font-bold">CrossClass Post</h1>
+  </header>
+
+  <!-- Centered Login Form -->
+  <main class="flex flex-grow items-center justify-center p-4">
+    <div class="bg-white shadow-lg p-6 rounded w-full max-w-md">
+      <h2 class="text-xl font-bold mb-4 text-center">Login</h2>
+      <form id="login-form" class="space-y-3">
+        <input id="email" type="email" placeholder="Email" class="border p-2 w-full rounded" required>
+        <input id="password" type="password" placeholder="Password" class="border p-2 w-full rounded" required>
+        <button class="bg-blue-600 text-white p-2 w-full rounded hover:bg-blue-700 transition">Login</button>
+        <p id="login-error" class="text-red-600 text-sm mt-2"></p>
+      </form>
+      <p class="mt-4 text-center text-sm">
+        Don't have an account? <a href="../signup/" class="text-blue-600 underline">Sign up</a>
+      </p>
+      <div class="max-w-3xl mx-auto mt-4">
+        <button onclick="window.location.href='../'" 
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+          ← Back to Home
+        </button>
+      </div>
+    </div>
+  
+  </main>  <!-- Back button -->
+
+
+  <script type="module" src="../main.js"></script>
 </body>
 </html>
