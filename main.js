@@ -271,7 +271,7 @@ logoutBtns.forEach(btn => {
       viewBtn.textContent = "View";
       viewBtn.className = "bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition";
       viewBtn.addEventListener("click", () => {
-        window.location.href = `view?id=${post.id}`;
+        window.location.href = `../view?id=${post.id}`;
       });
 
 
@@ -280,7 +280,7 @@ logoutBtns.forEach(btn => {
       // Delete button (only for poster)
       if (auth.currentUser && auth.currentUser.uid === post.authorId) {
         const deleteBtn = document.createElement("img");
-        deleteBtn.src = "delete.png"; // path to your PNG
+        deleteBtn.src = "../delete.png"; // path to your PNG
         deleteBtn.alt = "Delete";
         deleteBtn.className = "w-6 h-6 cursor-pointer";
 
