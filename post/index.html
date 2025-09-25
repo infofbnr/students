@@ -21,7 +21,7 @@
         <!-- Curriculum Selector -->
         <div class="mb-4">
           <label for="curriculum" class="block text-gray-700 font-medium mb-1">Curriculum</label>
-          <select id="curriculum" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400">
+          <select id="curriculum" class="border select-none border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400">
             <option value="">-- Select Curriculum --</option>
             <option value="english">🇬🇧 English Bac</option>
             <option value="french">🇫🇷 French Bac</option>
@@ -31,7 +31,7 @@
         <!-- Subject Selector -->
         <div class="mb-4">
           <label for="subject" class="block text-gray-700 font-medium mb-1">Subject</label>
-          <select id="subject" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400" disabled>
+          <select id="subject" class="border select-none border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400" disabled>
             <option value="">-- Select a curriculum first --</option>
           </select>
         </div>
@@ -39,7 +39,7 @@
         <!-- Grade Selector -->
         <div class="mb-4">
           <label for="grade" class="block text-gray-700 font-medium mb-1">Grade</label>
-          <select id="grade" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400">
+          <select id="grade" class="border select-none border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400">
             <option value="">-- Select Grade --</option>
             <option value="10">10th Grade</option>
             <option value="11">11th Grade</option>
@@ -73,7 +73,7 @@
 
         <!-- Submit Button -->
         <button type="submit" id="submit-post"
-          class="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition w-full">
+          class="bg-green-500 select-none text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition w-full">
           Post
         </button>
       </form>
@@ -81,7 +81,7 @@
       <!-- Back button -->
       <div class="max-w-3xl mx-auto mt-4">
         <button onclick="window.location.href='../posts/'" 
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                class="bg-gray-500 select-none text-white px-4 py-2 rounded hover:bg-gray-600">
           ← Back to Home
         </button>
       </div>
