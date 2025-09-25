@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossClass FAQ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="../crossclass.png">
+  <style>
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-answer.open {
+      max-height: 500px; /* enough for most answers */
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white p-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center flex-wrap">
+      <div class="flex items-center space-x-3">
+        <img src="../crossclass.png" alt="Logo" class="w-10 h-10 rounded-full">
+        <h1 class="text-2xl font-extrabold tracking-tight">CrossClass</h1>
+      </div>
+      <div class="flex gap-2 mt-2 sm:mt-0">
+        <a href="../login/" id="login-btn" class="bg-white text-blue-600 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-100 transition">
+          Login
+        </a>
+        <a href="../posts/" class="bg-green-500 px-3 py-1.5 rounded-lg font-medium hover:bg-green-600 transition">
+          Browse Posts
+        </a>
+        <a href="../account/" id="account-btn" class="bg-gray-200 text-black px-3 py-1.5 rounded-lg font-medium hover:bg-gray-300 transition hidden">
+          Account
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FAQ Content -->
+  <main class="flex flex-col flex-grow max-w-4xl mx-auto p-6 gap-6">
+    <h2 class="text-3xl font-bold text-gray-800 text-center">Frequently Asked Questions</h2>
+
+    <!-- FAQ Items -->
+    <div class="space-y-4 mt-6">
+
+      <!-- What is CrossClass -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          What is CrossClass?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+          CrossClass is a platform for students to share and learn school posts, get homework help, and exchange study tips. It combines user-generated posts with AI tutoring to make learning easier and more interactive.
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          How do I create a post?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+          Log in to your account and click the "+ Post" button in the navbar. Fill in the required fields and submit your question.
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          Can I edit or delete my posts?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+           As of September 2025, you can only delete your posts, not edit them. You can delete your posts by clicking the trash icon next to the "View" button.
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          Is my account information private?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+          Yes, only your username is visible to others. Your email is only visible to you, in the Account section, and your password is visible to no one, not even to the creator of this site.
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          Who is AI Tutor?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+          AI Tutor is an AI-powered tool designed to assist students with their studies by providing explanations and resources. It is enabled only for some subjects, like Math, Physics, Chemistry, English, and a couple of others. It will automatically reply to your post if it has the answer and your post meets the required criteria.
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4">
+        <button class="faq-btn w-full text-left flex justify-between items-center font-semibold text-lg">
+          Who can see my posts?
+          <span>▼</span>
+        </button>
+        <div class="faq-answer text-gray-600 mt-2">
+          All posts are public on the platform, but your personal information is limited to your username.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-center py-4 text-gray-600 text-sm mt-auto">
+    &copy; 2025 CrossClass. All rights reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="../main.js"></script>
+  <script>
+    // Toggle FAQ answers
+    document.querySelectorAll('.faq-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        answer.classList.toggle('open');
+        // rotate arrow
+        const arrow = btn.querySelector('span');
+        arrow.textContent = answer.classList.contains('open') ? '▲' : '▼';
+      });
+    });
+  </script>
+
+</body>
+</html>

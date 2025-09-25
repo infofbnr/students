@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossClass</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="../crossclass.png">
+  <style>
+    /* Smooth slide animation for tree */
+    .tree-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .tree-content.open {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white p-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center flex-wrap">
+      <div class="flex items-center space-x-3">
+        <img src="../crossclass.png" alt="Logo" class="w-10 h-10 rounded-full">
+        <h1 class="text-2xl font-extrabold tracking-tight">CrossClass</h1>
+      </div>
+      <div class="flex gap-2 mt-2 sm:mt-0">
+        <a href="../login/" id="login-btn" class="bg-white text-blue-600 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-100 transition">
+          Login
+        </a>
+        <a href="../post/" class="bg-green-500 px-3 py-1.5 rounded-lg font-medium hover:bg-green-600 transition">
+          + Post
+        </a>
+        <a href="../account/" id="account-btn" class="bg-gray-200 text-black px-3 py-1.5 rounded-lg font-medium hover:bg-gray-300 transition hidden">
+          Account
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex flex-col md:flex-row flex-grow max-w-6xl mx-auto w-full gap-6 p-4 md:p-6">
+    
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 space-y-3">
+      <!-- English Bac -->
+      <div class="border border-gray-300 rounded-lg">
+        <button class="w-full flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200"
+                onclick="toggleTree('english-tree')">
+          <span class="font-semibold">🇬🇧 English Bac</span>
+          <span class="text-gray-500">▼</span>
+        </button>
+        <div id="english-tree" class="tree-content bg-white">
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-english">
+            📖 English
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-arabic">
+            📝 Arabic
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-tarikh">
+            📜 Tarikh
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-tarbia">
+            🏛️ Tarbia
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-joghrafia">
+            🗺️ Joghrafia
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-philosophy">
+            🧠 Philosophy
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-sociology">
+            👥 Sociology
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-economics">
+            💰 Economics
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-chemistry">
+            ⚗️ Chemistry
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-math">
+            ➕ Math
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-biology">
+            🧬 Biology
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="english-physics">
+            🔭 Physics
+          </button>
+        </div>
+      </div>
+
+            <!-- French Bac -->
+      <!-- French Bac -->
+      <div class="border border-gray-300 rounded-lg">
+        <button class="w-full flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200"
+                onclick="toggleTree('french-tree')">
+          <span class="font-semibold">🇫🇷 French Bac</span>
+          <span class="text-gray-500">▼</span>
+        </button>
+        <div id="french-tree" class="tree-content bg-white">
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-sciences">
+            🔬 Sciences
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-mathématiques">
+            ➕ Mathématiques
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-histoire-géo">
+            🗺️ Histoire-Géo
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-philosophie">
+            🧠 Philosophie
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-français">
+            📖 Français
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-anglais">
+            📝 Anglais
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-arabe">
+            🖊️ Arabe
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-emc">
+            ⚖️ EMC
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-svt">
+            🧬 SVT
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-physique">
+            🔭 Physique
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-chimie">
+            ⚗️ Chimie
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-ses">
+            💰 SES
+          </button>
+          <button class="tree-btn block w-full text-left p-3 hover:bg-gray-100" data-section="french-spe">
+            🌟 Spécialité
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Posts Section -->
+    <section class="flex-grow">
+      <h2 id="section-title" class="text-2xl md:text-3xl font-bold mb-4 text-gray-800">
+        Select a subject to view questions
+      </h2>
+      <div id="posts-container" class="space-y-4">
+        <!-- Posts appear here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-center py-4 text-gray-600 text-sm mt-auto">
+    &copy; 2025 CrossClass. All rights reserved.
+  </footer>
+
+  <script type="module" src="../main.js"></script>
+</body>
+</html>

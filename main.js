@@ -1,6 +1,6 @@
 // main.js
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
-import { getFirestore, deleteDoc, collection, getDocs, doc, getDoc, query, where, orderBy, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getFirestore, deleteDoc, collection, getDocs, updateDoc, doc, getDoc, query, where, orderBy, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-storage.js";
 import { 
@@ -195,7 +195,7 @@ if (loginForm) {
         return;
       }
 
-      window.location.href = "../";
+      window.location.href = "../posts/";
     } catch (err) {
       const errorEl = document.getElementById("login-error");
       if (errorEl) errorEl.innerText = err.message;
@@ -426,7 +426,8 @@ logoutBtns.forEach(btn => {
           authorId: user.uid,
           username: user.displayName || "Anonymous",
           createdAt: serverTimestamp(),
-          media: mediaUrl
+          media: mediaUrl,
+          aiAnswerSent: false     // ✅ ensures AI hasn't answered yet
         });
 
         // Clear form
@@ -437,7 +438,7 @@ logoutBtns.forEach(btn => {
         if (q("#media-file")) q("#media-file").value = "";
 
         alert("Post submitted successfully!");
-        window.location.href = "../";
+        window.location.href = "../posts/";
 
       } catch (err) {
         if (errorEl) errorEl.innerText = err.message;
@@ -482,7 +483,7 @@ logoutBtns.forEach(btn => {
     `;
     // === After rendering the post ===
     // === Auto AI Answer (after rendering post) ===
-    if (post) {
+    if (post && !post.aiAnswerSent) { // ✅ only run if AI hasn't answered yet
       const subject = post.subject?.toLowerCase() || "";
       const title = post.title || "";
       const description = post.description || "";
@@ -495,11 +496,12 @@ logoutBtns.forEach(btn => {
       // ✅ Allowed subjects only
       const allowedSubjects = ["math", "physics", "chemistry","english"]; // customize here
       const isAllowedSubject = allowedSubjects.includes(subject);
+
       function xorObfuscate(data, key) {
         return data.split('').map((char, i) => 
             String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length))
         ).join('');
-    }
+      }
 
       function base64Decode(data) {
           return atob(data);
@@ -516,7 +518,9 @@ logoutBtns.forEach(btn => {
 
       if (!(tooShort || tooLong || notUnderstandable) && isAllowedSubject) {
         try {
-          const prompt = `Help a student understand/solve this homework question:\n\nTitle: ${title}\n\nDescription: ${description}`;
+          const prompt = `Explain this homework question in a very simple, short way (like ELI5). Use plain words, simple math symbols (like √), and add line breaks between steps. Keep it easy to read.\n\nTitle: ${title}\n\nDescription: ${description}`;
+
+
           
           const res = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
@@ -543,6 +547,9 @@ logoutBtns.forEach(btn => {
               createdAt: serverTimestamp()
             });
 
+            // ✅ Mark post so AI won't answer again
+            await updateDoc(doc(db, "posts", postId), { aiAnswerSent: true });
+
             // Refresh the answers list so AI shows up
             loadAnswers();
           }
@@ -552,7 +559,10 @@ logoutBtns.forEach(btn => {
       } else {
         console.log("AI skipped: barriers triggered.");
       }
+    } else {
+      console.log("AI already sent for this post.");
     }
+
 
 
   } catch (err) {
@@ -600,6 +610,7 @@ logoutBtns.forEach(btn => {
 
   // Load answers for this post
   async function loadAnswers() {
+    const answersContainer = document.getElementById("answers-container");
     if (!answersContainer) return;
 
     answersContainer.innerHTML = "Loading answers...";
@@ -617,14 +628,15 @@ logoutBtns.forEach(btn => {
         const ans = doc.data();
         const div = document.createElement("div");
         div.className = "bg-white p-2 rounded shadow";
-        div.innerHTML = `<p class="text-sm">${ans.text}</p>
+        div.innerHTML = `<p class="text-sm" style="white-space: pre-line;">${ans.text}</p>
                         <p class="text-xs text-gray-500">by @${ans.username} on ${ans.createdAt?.toDate().toLocaleString([], {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit"
-}) || ''}</p>`;
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        }) || ''}</p>`;
+
         answersContainer.appendChild(div);
       });
     } catch (err) {
