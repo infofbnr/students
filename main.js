@@ -1,13 +1,14 @@
 // main.js
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
-import { getFirestore, deleteDoc, collection, getDocs, updateDoc, doc, getDoc, query, where, orderBy, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getFirestore, deleteDoc, collection, getDocs, updateDoc, doc, getDoc, query, where, orderBy, serverTimestamp, addDoc, limit } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-storage.js";
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   sendEmailVerification, 
-  signOut 
+  signOut,
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
 
 // 🔧 Your Firebase Config
@@ -128,7 +129,7 @@ if (signupForm) {
     e.preventDefault();
     const email = document.getElementById("signup-email")?.value.trim();
     const password = document.getElementById("signup-password")?.value;
-    const username = document.getElementById("signup-username")?.value.trim();
+    const username = document.getElementById("username")?.value.trim();
     const errorEl = document.getElementById("signup-error");
     if (errorEl) errorEl.innerText = "";
 
@@ -140,16 +141,16 @@ if (signupForm) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
       // Set displayName
-      await user.updateProfile({ displayName: username });
+      await updateProfile(user, { displayName: username });
 
       // Add user to Firestore
       await addDoc(collection(db, "users"), {
         uid: user.uid,
         email: user.email,
         username,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        karma: 0
       });
 
       // Send verification email
@@ -487,14 +488,14 @@ logoutBtns.forEach(btn => {
       const subject = post.subject?.toLowerCase() || "";
       const title = post.title || "";
       const description = post.description || "";
-
+      const grade = post.grade || "";
       // === Barriers ===
       const tooShort = description.length < 20;
       const tooLong = description.length > 1000;
       const notUnderstandable = !/[a-zA-Z0-9]/.test(description);
 
       // ✅ Allowed subjects only
-      const allowedSubjects = ["math", "physics", "chemistry","english"]; // customize here
+      const allowedSubjects = ["math", "physics", "chemistry","english","economics","biology","sociology","philosophy"]; // customize here
       const isAllowedSubject = allowedSubjects.includes(subject);
 
       function xorObfuscate(data, key) {
@@ -518,10 +519,13 @@ logoutBtns.forEach(btn => {
 
       if (!(tooShort || tooLong || notUnderstandable) && isAllowedSubject) {
         try {
-          const prompt = `Explain this homework question in a very simple, short way (like ELI5). Use plain words, simple math symbols (like √), and add line breaks between steps. Keep it easy to read.\n\nTitle: ${title}\n\nDescription: ${description}`;
+            const prompt = `Explain this homework question for a student in grade "${grade}". Use very simple, clear language (like ELI5), plain words, and simple math symbols (like √). Add line breaks between steps. Keep it easy to read and concise.
 
+      Title: ${title}
 
-          
+      Description: ${description}
+      Grade: ${grade}
+      `;
           const res = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -572,7 +576,6 @@ logoutBtns.forEach(btn => {
   // Inside your DOMContentLoaded
   const answerForm = document.getElementById("answer-form");
   const answerText = document.getElementById("answer-text");
-  const answersContainer = document.getElementById("answers-container");
 
   if (answerForm) {
     answerForm.addEventListener("submit", async (e) => {
@@ -594,7 +597,8 @@ logoutBtns.forEach(btn => {
           text,
           authorId: user.uid,
           username: user.displayName || "Anonymous",
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          karma: 0
         });
 
         answerText.value = ""; // clear textarea
@@ -607,46 +611,147 @@ logoutBtns.forEach(btn => {
       }
     });
   }
+// Load answers for this post
+async function loadAnswers() {
+  const answersContainer = document.getElementById("answers-container");
+  if (!answersContainer) return;
 
-  // Load answers for this post
-  async function loadAnswers() {
-    const answersContainer = document.getElementById("answers-container");
-    if (!answersContainer) return;
+  answersContainer.innerHTML = "Loading answers...";
 
-    answersContainer.innerHTML = "Loading answers...";
-    try {
-      const qSnap = await getDocs(
-        query(
-          collection(db, "answers"),
-          where("postId", "==", postId),
-          orderBy("createdAt", "asc")
-        )
-      );
+  try {
+    const qSnap = await getDocs(
+      query(
+        collection(db, "answers"),
+        where("postId", "==", postId),
+        orderBy("createdAt", "asc")
+      )
+    );
 
-      answersContainer.innerHTML = "";
-      qSnap.docs.forEach(doc => {
-        const ans = doc.data();
-        const div = document.createElement("div");
-        div.className = "bg-white p-2 rounded shadow";
-        div.innerHTML = `<p class="text-sm" style="white-space: pre-line;">${ans.text}</p>
-                        <p class="text-xs text-gray-500">by @${ans.username} on ${ans.createdAt?.toDate().toLocaleString([], {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit"
-        }) || ''}</p>`;
+    answersContainer.innerHTML = "";
 
-        answersContainer.appendChild(div);
+    qSnap.docs.forEach(docSnap => {
+      const ans = docSnap.data();
+      const answerId = docSnap.id;
+
+      const div = document.createElement("div");
+      div.className = "bg-white p-2 rounded shadow";
+
+      div.innerHTML = `
+        <p class="text-sm" style="white-space: pre-line;">${ans.text}</p>
+        <p class="text-xs text-gray-500">
+          by @${ans.username} on ${ans.createdAt?.toDate().toLocaleString([], {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+          }) || ''}
+        </p>
+      `;
+
+      // Upvote button
+      const upvoteBtn = document.createElement("button");
+      upvoteBtn.textContent = `⬆ ${ans.karma || 0}`;
+      upvoteBtn.className = "text-blue-600 hover:underline select-none ml-2 text-sm";
+
+      // Click handler inside the loop, tied to this specific answer
+      upvoteBtn.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Login to upvote.");
+          return;
+        }
+
+        if (user.uid === ans.authorId) {
+          alert("You cannot upvote your own answer.");
+          return;
+        }
+
+        const answerRef = doc(db, "answers", answerId);
+        const alreadyUpvoted = ans.upvoters?.includes(user.uid);
+
+        if (alreadyUpvoted) {
+          alert("You already upvoted this answer!");
+          return;
+        }
+
+        try {
+          // Increment karma and add user to upvoters
+          await updateDoc(answerRef, {
+            karma: (ans.karma || 0) + 1,
+            upvoters: [...(ans.upvoters || []), user.uid]
+          });
+
+          // Update the answer author's total karma
+          // Find the user document by UID (since users collection uses auto IDs)
+          const userQuery = query(collection(db, "users"), where("uid", "==", ans.authorId));
+          const userSnap = await getDocs(userQuery);
+          if (!userSnap.empty) {
+            const userDoc = userSnap.docs[0];
+            await updateDoc(userDoc.ref, {
+              karma: (userDoc.data().karma || 0) + 1
+            });
+          }
+
+          // Update UI immediately
+          ans.karma = (ans.karma || 0) + 1;
+          ans.upvoters = [...(ans.upvoters || []), user.uid];
+          upvoteBtn.textContent = `⬆ ${ans.karma}`;
+
+        } catch (err) {
+          console.error("Upvote error:", err);
+        }
       });
-    } catch (err) {
-      answersContainer.innerHTML = `<p class="text-red-500">Error loading answers</p>`;
-      console.error(err);
-    }
+
+      div.appendChild(upvoteBtn);
+      answersContainer.appendChild(div);
+    });
+  } catch (err) {
+    answersContainer.innerHTML = `<p class="text-red-500">Error loading answers</p>`;
+    console.error(err);
   }
+}
 
-  // Call it once after page load
-  loadAnswers();
+// Call after page load
+loadAnswers();
 
 
+async function loadLeaderboard() {
+  const leaderboardContainer = document.getElementById("leaderboard");
+  if (!leaderboardContainer) return;
+
+  leaderboardContainer.innerHTML = "Loading leaderboard...";
+
+  try {
+    const usersQuery = query(
+      collection(db, "users"),
+      orderBy("karma", "desc"),
+      limit(10)
+    );
+
+    const snap = await getDocs(usersQuery);
+    leaderboardContainer.innerHTML = "";
+
+    if (snap.empty) {
+      leaderboardContainer.innerHTML = "<p class='text-gray-500'>No users found.</p>";
+      return;
+    }
+
+    snap.docs.forEach((doc, i) => {
+      const user = doc.data();
+      const div = document.createElement("div");
+      div.className = "flex justify-between p-2 border-b";
+      div.innerHTML = `<span>${i + 1}. ${user.username || "Unknown"}</span><span>${user.karma || 0} pts</span>`;
+      leaderboardContainer.appendChild(div);
+    });
+  } catch (err) {
+    leaderboardContainer.innerHTML = `<p class='text-red-500'>Error loading leaderboard: ${err.message}</p>`;
+    console.error(err);
+  }
+}
+
+// Call the function if leaderboard exists
+if (document.getElementById("leaderboard")) {
+  loadLeaderboard();
+}
 });

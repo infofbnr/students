@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - CrossClass</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="../crossclass.png">
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white p-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center flex-wrap">
+      <h1 class="text-2xl font-bold">CrossClass Leaderboard</h1>
+      <button onclick="window.location.href='../posts/'" 
+              class="bg-white text-blue-600 px-3 py-1.5 rounded hover:bg-gray-100">
+        ← Back
+      </button>
+    </div>
+  </nav>
+
+  <!-- Leaderboard Container -->
+  <main class="flex flex-col max-w-3xl mx-auto mt-6 p-4 bg-white rounded shadow">
+    <h2 class="text-xl font-bold mb-4">Top Contributors ⭐</h2>
+    <div id="leaderboard" class="flex flex-col divide-y divide-gray-200"></div>
+  </main>
+
+  <script type="module" src="../main.js"></script>
+</body>
+</html>
